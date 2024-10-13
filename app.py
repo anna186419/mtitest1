@@ -104,8 +104,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-if __name__ == '__main__':
-    with app.app_context():
+with app.app_context():
         db.create_all()  # Создание таблиц в контексте приложения
-    app.run(debug=True)
+
