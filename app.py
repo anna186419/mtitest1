@@ -104,6 +104,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-with app.app_context():
-        db.create_all()  # Создание таблиц в контексте приложения
 
+from sqlalchemy import inspect
+
+with app.app_context():
+    inspector = inspect(db.engine)
+    if not inspector.has_table('student'):  # Проверяем наличие таблицы 'student'
+        db.create_all()
