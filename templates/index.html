@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+</head>
+<body>
+    <h1>Главная страница</h1>
+
+    {% if current_user.is_authenticated %}
+        <p>Добро пожаловать, {{ current_user.username }}!</p>
+        <a href="{{ url_for('logout') }}">Выход</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Вход</a>
+        <a href="{{ url_for('register') }}">Регистрация</a>
+    {% endif %}
+
+    <h2>Студенты</h2>
+    <ul>
+        {% for student in students %}
+            <li>{{ student.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Преподаватели</h2>
+    <ul>
+        {% for teacher in teachers %}
+            <li>{{ teacher.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Курсы</h2>
+    <ul>
+        {% for course in courses %}
+            <li>{{ course.name }} - Преподаватель: {{ course.teacher.name if course.teacher else 'Не назначен' }}</li>
+        {% endfor %}
+        {% if courses | length == 0 %}
+            <li>Нет доступных курсов.</li>
+        {% endif %}
+    </ul>
+
+    <h2>Добавить</h2>
+    <ul>
+        <li><a href="{{ url_for('add_student') }}">Добавить Студента</a></li>
+        <li><a href="{{ url_for('add_teacher') }}">Добавить Преподавателя</a></li>
+        <li><a href="{{ url_for('add_course') }}">Добавить Курс</a></li>
+      </ul>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
+
