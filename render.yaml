@@ -1,38 +1,37 @@
-web:
-  type: python
-  runtime: python3.11
-  env:
-    FLASK_ENV: production
-    FLASK_APP: app.py
-    DATABASE_URL: sqlite:///instance/school.db
-    SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
-    DEBUG: "false"
-    JSON_SORT_KEYS: "false"
-    SESSION_COOKIE_SECURE: "true"
-    SESSION_COOKIE_HTTPONLY: "true"
-    SESSION_COOKIE_SAMESITE: "Lax"
-  
-  build:
-    commands:
-      - pip install -r requirements.txt
-      - flask db upgrade  # Если используете Flask-Migrate
+type: python
+runtime: python3.11
+env:
+  FLASK_ENV: production
+  FLASK_APP: app.py
+  DATABASE_URL: sqlite:///instance/school.db
+  SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
+  DEBUG: "false"
+  JSON_SORT_KEYS: "false"
+  SESSION_COOKIE_SECURE: "true"
+  SESSION_COOKIE_HTTPONLY: "true"
+  SESSION_COOKIE_SAMESITE: "Lax"
 
-  start: gunicorn --workers 4 --threads 2 --timeout 90 --bind 0.0.0.0:8000 app:app
+build:
+  commands:
+    - pip install -r requirements.txt
+    - flask db upgrade  # Если используете Flask-Migrate
 
-  ports:
-    - 8000
+start: gunicorn --workers 4 --threads 2 --timeout 90 --bind 0.0.0.0:8000 app:app
 
-  healthcheck:
-    path: /health
-    interval: 30s
-    timeout: 5s
-    retries: 3
+ports:
+  - 8000
 
-  files:
-    - requirements.txt
-    - app.py
-    - models.py
-    - instance/
-    - static/
-    - templates/
-    - config.py
+healthcheck:
+  path: /health
+  interval: 30s
+  timeout: 5s
+  retries: 3
+
+files:
+  - requirements.txt
+  - app.py
+  - models.py
+  - instance/
+  - static/
+  - templates/
+  - config.py
