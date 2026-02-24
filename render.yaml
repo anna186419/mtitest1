@@ -1,7 +1,27 @@
 services:
-  web:
-    env:
-      FLASK_ENV: production
-      FLASK_APP: app.py
-      DATABASE_URL: sqlite:///instance/school.db
-      SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
+  - type: web
+    name: school-app
+    env: python
+    plan: free
+    repo: https://github.com/anna186419/mtitest1
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_APP
+        value: app.py
+      - key: DATABASE_URL
+        value: sqlite:///instance/school.db
+      - key: SECRET_KEY
+        value: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
+      - key: DEBUG
+        value: "false"
+      - key: JSON_SORT_KEYS
+        value: "false"
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: SESSION_COOKIE_HTTPONLY
+        value: "true"
+      - key: SESSION_COOKIE_SAMESITE
+        value: "Lax"
