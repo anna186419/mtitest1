@@ -21,6 +21,10 @@ deploy:
     SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
     DEBUG: "false"
     JSON_SORT_KEYS: "false"
+    # Дополнительные рекомендуемые переменные
+    SESSION_COOKIE_SECURE: "true"  # Для HTTPS
+    SESSION_COOKIE_HTTPONLY: "true"
+    SESSION_COOKIE_SAMESITE: "Lax"
 
 files:
   - requirements.txt
@@ -29,12 +33,12 @@ files:
   - instance/
   - static/
   - templates/
-  - migrations/  # Если используете миграции
-  - config.py    # Если есть конфигурационный файл
+  - migrations/
+  - config.py
 
 packages:
   - pip install -r requirements.txt
-  - flask db upgrade  # Если используете Flask-Migrate
+  - flask db upgrade
 
 healthcheck:
   http:
@@ -46,3 +50,24 @@ healthcheck:
 resources:
   cpu: 1
   memory: 512MB
+
+# Дополнительные секции
+secrets:
+  DATABASE_URL:
+  SECRET_KEY:
+
+logging:
+  version: 1
+  disable_existing_loggers: false
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: verbose
+  loggers:
+    app:
+      level: INFO
+      handlers: [console]
+
+concurrency:
+  max_requests: 1000
+  max_requests_jitter: 100
