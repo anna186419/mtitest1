@@ -1,19 +1,6 @@
-build:
-  dockerfile: Dockerfile
-  image: python:3.11-slim
-
-deploy:
-  command:
-    - gunicorn
-    - --workers 4
-    - --threads 2
-    - --timeout 90
-    - --access-logfile "-"
-    - --error-logfile "-"
-    - --bind 0.0.0.0:8000
-    - app:app
-  ports:
-    - 8000:8000
+web:
+  type: python
+  runtime: python3.11
   env:
     FLASK_ENV: production
     FLASK_APP: app.py
@@ -21,53 +8,31 @@ deploy:
     SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
     DEBUG: "false"
     JSON_SORT_KEYS: "false"
-    # Дополнительные рекомендуемые переменные
-    SESSION_COOKIE_SECURE: "true"  # Для HTTPS
+    SESSION_COOKIE_SECURE: "true"
     SESSION_COOKIE_HTTPONLY: "true"
     SESSION_COOKIE_SAMESITE: "Lax"
+  
+  build:
+    commands:
+      - pip install -r requirements.txt
+      - flask db upgrade  # Если используете Flask-Migrate
 
-files:
-  - requirements.txt
-  - app.py
-  - models.py
-  - instance/
-  - static/
-  - templates/
-  - migrations/
-  - config.py
+  start: gunicorn --workers 4 --threads 2 --timeout 90 --bind 0.0.0.0:8000 app:app
 
-packages:
-  - pip install -r requirements.txt
-  - flask db upgrade
+  ports:
+    - 8000
 
-healthcheck:
-  http:
+  healthcheck:
     path: /health
     interval: 30s
     timeout: 5s
     retries: 3
 
-resources:
-  cpu: 1
-  memory: 512MB
-
-# Дополнительные секции
-secrets:
-  DATABASE_URL:
-  SECRET_KEY:
-
-logging:
-  version: 1
-  disable_existing_loggers: false
-  handlers:
-    console:
-      class: logging.StreamHandler
-      formatter: verbose
-  loggers:
-    app:
-      level: INFO
-      handlers: [console]
-
-concurrency:
-  max_requests: 1000
-  max_requests_jitter: 100
+  files:
+    - requirements.txt
+    - app.py
+    - models.py
+    - instance/
+    - static/
+    - templates/
+    - config.py
