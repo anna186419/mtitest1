@@ -1,5 +1,7 @@
-env:
-  FLASK_ENV: production
-  FLASK_APP: app.py
-  DATABASE_URL: sqlite:///instance/school.db
-  SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26 
+services:
+  web:
+    env:
+      FLASK_ENV: production
+      FLASK_APP: app.py
+      DATABASE_URL: sqlite:///instance/school.db
+      SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
