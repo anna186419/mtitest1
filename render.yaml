@@ -14,7 +14,6 @@ deploy:
     FLASK_ENV: production
     FLASK_APP: app.py
     DATABASE_URL: sqlite:///instance/school.db
-    SECRET_KEY: your_secret_key
 
 files:
   - requirements.txt
