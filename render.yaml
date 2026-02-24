@@ -6,6 +6,10 @@ deploy:
   command:
     - gunicorn
     - --workers 4
+    - --threads 2
+    - --timeout 90
+    - --access-logfile "-"
+    - --error-logfile "-"
     - --bind 0.0.0.0:8000
     - app:app
   ports:
@@ -14,6 +18,9 @@ deploy:
     FLASK_ENV: production
     FLASK_APP: app.py
     DATABASE_URL: sqlite:///instance/school.db
+    SECRET_KEY: 33089f9e2eb17db8ddf07beb55ea2c12db505526b1f63f3963a352b2e10c9d26
+    DEBUG: "false"
+    JSON_SORT_KEYS: "false"
 
 files:
   - requirements.txt
@@ -22,6 +29,20 @@ files:
   - instance/
   - static/
   - templates/
+  - migrations/  # Если используете миграции
+  - config.py    # Если есть конфигурационный файл
 
 packages:
   - pip install -r requirements.txt
+  - flask db upgrade  # Если используете Flask-Migrate
+
+healthcheck:
+  http:
+    path: /health
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+resources:
+  cpu: 1
+  memory: 512MB
