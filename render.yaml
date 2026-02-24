@@ -1,9 +1,28 @@
-services:
-  # A Docker web service
-  - type: web
-    name: fastapi-example
-    runtime: python
-    plan: free
-    autoDeploy: false
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+build:
+  dockerfile: Dockerfile
+  image: python:3.11-slim
+
+deploy:
+  command:
+    - gunicorn
+    - --workers 4
+    - --bind 0.0.0.0:8000
+    - app:app
+  ports:
+    - 8000:8000
+  env:
+    FLASK_ENV: production
+    FLASK_APP: app.py
+    DATABASE_URL: sqlite:///instance/school.db
+    SECRET_KEY: your_secret_key
+
+files:
+  - requirements.txt
+  - app.py
+  - models.py
+  - instance/
+  - static/
+  - templates/
+
+packages:
+  - pip install -r requirements.txt
